@@ -96,9 +96,9 @@ while True:
         if game_over:
             winner = ttt.winner(board)
             if winner is None:
-                title = f"Game Over: Tie."
+                title = f"Game Over: Tie. {ttt.CHECKED}"
             else:
-                title = f"Game Over: {winner} wins."
+                title = f"Game Over: {winner} wins. {ttt.CHECKED}"
         elif user == player:
             title = f"Play as {user}"
         else:
@@ -136,6 +136,7 @@ while True:
             screen.blit(again, againRect)
             click, _, _ = pygame.mouse.get_pressed()
             if click == 1:
+                ttt.CHECKED = 0
                 mouse = pygame.mouse.get_pos()
                 if againButton.collidepoint(mouse):
                     time.sleep(0.2)

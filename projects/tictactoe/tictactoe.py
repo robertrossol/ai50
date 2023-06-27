@@ -3,10 +3,12 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
 EMPTY = None
+CHECKED = 0
 
 
 def initial_state():
@@ -49,8 +51,9 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    board[action[0]][action[1]] = player(board)
-    return board
+    temp_board = copy.deepcopy(board)
+    temp_board[action[0]][action[1]] = player(temp_board)
+    return temp_board
     raise NotImplementedError
 
 
@@ -87,10 +90,10 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    winner = winner(board)
-    if winner == X:
+    x = winner(board)
+    if x == X:
        return 1
-    elif winner == O:
+    elif x == O:
        return -1
     else:
        return 0
@@ -98,9 +101,54 @@ def utility(board):
 
 
 def minimax(board):
-    """
+  """
     Returns the optimal action for the current player on the board.
-    """
+  """
     # !temporary! returns first available action
-    return actions(board)[0]
-    raise NotImplementedError
+    # return actions(board)[0]
+  # player = player(board)
+  # moves = actions(board)
+    # goal = 0
+
+  def max_value(board):
+     global CHECKED
+     CHECKED += 1
+     best_move = tuple()
+     if terminal(board):
+        return [utility(board), best_move]
+     v = -100
+     for move in actions(board):
+        current_v = v
+        y = min_value(result(board, move))[0]
+        if y < v: break
+        v = max(v, y)
+        if v != current_v:
+          best_move = move
+        if v == 1 : break
+     return [v, best_move]
+
+  def min_value(board):
+     global CHECKED
+     CHECKED += 1
+     best_move = tuple()
+     if terminal(board):
+        return [utility(board), best_move]
+     v = 100
+     for move in actions(board):
+        current_v = v
+        y = max_value(result(board, move))[0]
+        if y > v : break
+        v = min(v, y)
+        if v != current_v:
+          best_move = move
+        if v == -1 : break
+     return [v, best_move]
+
+  if player(board) == X:
+    return max_value(board)[-1]
+
+  if player(board) == O:
+    return min_value(board)[-1]
+
+  # return best_move
+  raise NotImplementedError
